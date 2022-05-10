@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -60,6 +61,8 @@ class MarcoServidor extends JFrame implements Runnable{
 		try {
 			ServerSocket servidor = new ServerSocket(5000);
 			
+			while(true) {
+			
 			Socket miSocket = servidor.accept();
 			
 			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
@@ -70,7 +73,18 @@ class MarcoServidor extends JFrame implements Runnable{
 			
 			//System.out.println("Este es el mensaje que llega:\n"+mensajeTexto);
 			
-			miSocket.close();
+			/**
+			
+			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
+			
+			flujoSalida.writeUTF("Recibido");
+			
+			*/
+			//flujoSalida.close();
+			
+			//miSocket.close();
+			
+			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
