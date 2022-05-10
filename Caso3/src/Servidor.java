@@ -18,6 +18,9 @@ import javax.swing.JTextArea;
  *
  */
 public class Servidor {
+	private String nombreCliente;
+	private long identificadorPaquete;
+	private String estadoPaquete;
 	
 	public static void main(String[] args) {
 	
@@ -93,6 +96,9 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 	}
 }
+	
+	
+	
 	
 	
 	
