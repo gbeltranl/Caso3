@@ -12,6 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Scanner;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -55,6 +56,8 @@ public class Servidor {
 		
 		miMarco.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		
+		
 	}
 }
 class MarcoServidor extends JFrame implements Runnable{
@@ -68,6 +71,12 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 		areaTexto = new JTextArea();
 		
+//p		
+		miBoton = new JButton("Enviar");
+		
+		add(miBoton);
+//
+		
 		miLamina.add(areaTexto,BorderLayout.CENTER);
 
 		add(miLamina);
@@ -76,11 +85,17 @@ class MarcoServidor extends JFrame implements Runnable{
 
 		Thread miHilo = new Thread(this);
 
+		
 		miHilo.start();
-
+		
+		
+		
 	}
 
 	private JTextArea areaTexto;
+	
+//p//
+	private JButton miBoton;
 
 	@Override
 	public void run() {
@@ -123,4 +138,44 @@ class MarcoServidor extends JFrame implements Runnable{
 		}
 
 	}
+	/*
+	public void protocoloS() {
+		
+		System.out.println("Iniciando Servidor:");
+		
+		try {
+			ServerSocket servidor = new ServerSocket(5000);
+			
+			while(true) {
+			
+			Socket miSocket = servidor.accept();
+			
+			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
+		
+			
+			//DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
+
+			
+			String mensajeTexto = flujoEntrada.readUTF();
+			
+			areaTexto.append("\n"+ mensajeTexto);
+			
+			
+			
+			//
+			//flujoSalida.writeUTF("Recibido");
+			//
+		
+			//flujoSalida.close();
+			
+			//miSocket.close();
+			
+			}
+
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}*/
 }
