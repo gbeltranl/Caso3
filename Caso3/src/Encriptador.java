@@ -1,13 +1,23 @@
+import java.io.File;
+import java.math.BigInteger;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import java.util.Scanner;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Encriptador {
 
@@ -42,9 +52,9 @@ public class Encriptador {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    return keyGen.generateKey();
+		return keyGen.generateKey();
 	}
-	
+
 	public byte[] encryptDataSymmetric(String data, Key llave) throws Exception {  
 		Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
 		cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
@@ -53,7 +63,7 @@ public class Encriptador {
 		byte[] cipherText = cipher.doFinal();
 		return cipherText;  
 	} 
-	
+
 	public byte[] encryptDataAsymmetric(String data, Key llave) throws Exception {  
 		Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
 		cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
@@ -70,7 +80,7 @@ public class Encriptador {
 		byte[] decipherText = cipher.doFinal();
 		return new String(decipherText, "UTF8"); 
 	}
-	
+
 	public String decryptDataAsymmetric(byte[] data, Key llave) throws Exception{  
 		Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
 		cipher.init(Cipher.DECRYPT_MODE, llave); 
@@ -78,17 +88,42 @@ public class Encriptador {
 		byte[] decipherText = cipher.doFinal();
 		return new String(decipherText, "UTF8"); 
 	}
-	
+
 	public byte[] calcHmacSha256(Key secretKey, byte[] message) {
-	    byte[] hmacSha256 = null;
-	    try {
-	      Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-	      mac.init(secretKey);
-	      hmacSha256 = mac.doFinal(message);
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	    }
-	    return hmacSha256;
-	  }
+		byte[] hmacSha256 = null;
+		try {
+			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+			mac.init(secretKey);
+			hmacSha256 = mac.doFinal(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return hmacSha256;
+	}
+
+	public String keyToString(Key key) {
+		byte[] keyByte = key.getEncoded();
+		String keyString = Base64.getEncoder().encodeToString(keyByte);
+		return keyString;
+	}
+	public PublicKey fileToKey(File keyFile) {
+		PublicKey key = null;
+		try {
+			Scanner sc = new Scanner(keyFile);
+			sc.nextLine();
+			sc.nextLine();
+			String[] mod = sc.nextLine().split(":");
+			String[] exp = sc.nextLine().split(":");
+			BigInteger modulus = new BigInteger(mod[1].trim());
+			BigInteger exponent = new BigInteger(exp[1].trim());
+			RSAPublicKeySpec x =  new RSAPublicKeySpec(modulus, exponent);
+			KeyFactory kf  = KeyFactory.getInstance(ASYMMETRIC_ALGORITHM);
+			key = kf.generatePublic(x);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return key;
+	}
 
 }
