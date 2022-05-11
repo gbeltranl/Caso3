@@ -35,7 +35,17 @@ public class Cliente {
 			
 			String mensajeTexto = flujoEntrada.readUTF();
 			
-			System.out.println(mensajeTexto);
+			if(mensajeTexto == "c") {
+				
+				System.out.println(mensajeTexto);
+				
+			}else {
+				
+				System.out.println("Error en la consulta: " + mensajeTexto);
+				
+			}
+			
+			
 			
 			//misocket.close();
 			
