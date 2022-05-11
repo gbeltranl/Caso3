@@ -70,20 +70,21 @@ class MarcoServidor extends JFrame implements Runnable{
 			
 			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
 		
+			
+			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
+
+			
 			String mensajeTexto = flujoEntrada.readUTF();
 			
 			areaTexto.append("\n"+ mensajeTexto);
 			
-			//System.out.println("Este es el mensaje que llega:\n"+mensajeTexto);
 			
-			/**
 			
-			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
-			
+			//
 			flujoSalida.writeUTF("Recibido");
-			
-			*/
-			//flujoSalida.close();
+			//
+		
+			flujoSalida.close();
 			
 			//miSocket.close();
 			
