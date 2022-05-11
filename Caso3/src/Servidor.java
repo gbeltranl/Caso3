@@ -1,10 +1,7 @@
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.Key;
@@ -33,7 +30,7 @@ public class Servidor {
 	private String nombreCliente;
 	private long identificadorPaquete;
 	private String estadoPaquete;
-
+	
 	public static void main(String[] args) {
 		ec = new Encriptador();
 		kp = ec.generateAsymmetricKeyPair();
@@ -53,22 +50,22 @@ public class Servidor {
 
 
 		MarcoServidor miMarco = new MarcoServidor();
-
+		
 		miMarco.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 	}
 }
 class MarcoServidor extends JFrame implements Runnable{
 	public MarcoServidor() {
-
+		
 		setBounds(1200,300,280,350);
-
+		
 		JPanel miLamina = new JPanel();
-
+		
 		miLamina.setLayout(new BorderLayout());
-
+		
 		areaTexto = new JTextArea();
-
+		
 		miLamina.add(areaTexto,BorderLayout.CENTER);
 
 		add(miLamina);
@@ -90,31 +87,32 @@ class MarcoServidor extends JFrame implements Runnable{
 		System.out.println("Estoy a la escucha");
 
 		try {
-			ServerSocket servidor = new ServerSocket(5000);
-
+ServerSocket servidor = new ServerSocket(5000);
+			
 			while(true) {
-
-				Socket miSocket = servidor.accept();
-
-				DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
-
-				String mensajeTexto = flujoEntrada.readUTF();
-
-				areaTexto.append("\n"+ mensajeTexto);
-
-				//System.out.println("Este es el mensaje que llega:\n"+mensajeTexto);
-
-				/**
-
+			
+			Socket miSocket = servidor.accept();
+			
+			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
+		
+			
 			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
 
+			
+			String mensajeTexto = flujoEntrada.readUTF();
+			
+			areaTexto.append("\n"+ mensajeTexto);
+			
+			
+			
+			//
 			flujoSalida.writeUTF("Recibido");
-
-				 */
-				//flujoSalida.close();
-
-				//miSocket.close();
-
+			//
+		
+			flujoSalida.close();
+			
+			//miSocket.close();
+			
 			}
 
 		} catch (IOException e) {
