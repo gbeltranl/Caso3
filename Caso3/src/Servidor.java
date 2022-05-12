@@ -10,6 +10,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -53,6 +54,8 @@ public class Servidor {
 		
 		miMarco.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		
+		
 	}
 }
 class MarcoServidor extends JFrame implements Runnable{
@@ -66,6 +69,10 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 		areaTexto = new JTextArea();
 		
+		miBoton = new JButton("Enviar");
+		
+		add(miBoton);
+		
 		miLamina.add(areaTexto,BorderLayout.CENTER);
 
 		add(miLamina);
@@ -74,11 +81,16 @@ class MarcoServidor extends JFrame implements Runnable{
 
 		Thread miHilo = new Thread(this);
 
+		
 		miHilo.start();
-
+		
+		
+		
 	}
 
 	private JTextArea areaTexto;
+	
+	private JButton miBoton;
 
 	@Override
 	public void run() {
@@ -87,7 +99,7 @@ class MarcoServidor extends JFrame implements Runnable{
 		System.out.println("Estoy a la escucha");
 
 		try {
-			ServerSocket servidor = new ServerSocket(5000);
+			ServerSocket servidor = new ServerSocket(5001);
 			
 			while(true) {
 			
@@ -97,18 +109,79 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 			
 			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
-
-			
+	
 			String mensajeTexto = flujoEntrada.readUTF();
 			
 			areaTexto.append("\n"+ mensajeTexto);
 			
 			
 			
-			//
-			flujoSalida.writeUTF("Recibido");
+			// Envío de mensaje ACK
+			flujoSalida.writeUTF("ACK");
 			//
 		
+			// Llegada de mensaje de 24 digitos
+			String Paso2 = flujoEntrada.readUTF();
+			
+			areaTexto.append("\n"+ Paso2);
+			
+			// TODO Cifrar reto con llave privada y enviar al cliente
+			
+			flujoSalida.writeUTF("Reto Cifrado");
+			
+			
+			
+			// TODO El servidor extrae la llave simétrica y responde con un mensaje de confirmación (¨ACK¨).
+			String llaveSimetrica = flujoEntrada.readUTF();
+			
+			areaTexto.append("\n"+ llaveSimetrica);
+			
+			flujoSalida.writeUTF("ACK");
+			
+			// TODO  Si el nombre no está en la tabla el servidor responde con un mensaje de error (¨ERROR¨). 
+			
+			String nombre = flujoEntrada.readUTF();
+			
+			areaTexto.append("\n"+ nombre);
+			
+			if (true) {
+				
+				flujoSalida.writeUTF("ACK");
+				
+				// TODO Al recibir la solicitud anterior, el servidor verifica que el nombre de usuario recibido antes y el identificador del
+				//paquete estén en la tabla y correspondan.
+				
+				String paquete = flujoEntrada.readUTF();
+				
+				areaTexto.append("\n"+ paquete);
+				
+				if(true) {
+					
+					flujoSalida.writeUTF("Estado del paquete");
+					
+					String confirmacionServidor = flujoEntrada.readUTF();
+					
+					areaTexto.append("\n"+ confirmacionServidor);
+					
+					//TODO Enviar codigo de resumen
+					
+					flujoSalida.writeUTF("Codigo resumen");
+					
+				}else {
+					
+					areaTexto.append("\n"+ "No encontrado el paquete");
+				}
+				
+				
+				
+				
+				
+			} else {
+				
+				flujoSalida.writeUTF("Error");
+			}
+			
+			
 			flujoSalida.close();
 			
 			//miSocket.close();
@@ -121,4 +194,5 @@ class MarcoServidor extends JFrame implements Runnable{
 		}
 
 	}
+	
 }
