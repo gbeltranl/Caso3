@@ -19,6 +19,10 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * @author Gabriel
+ *
+ */
 public class Encriptador {
 
 	private final String SYMMETRIC_ALGORITHM = "AES";
@@ -81,6 +85,13 @@ public class Encriptador {
 		return new String(decipherText, "UTF8"); 
 	}
 
+	/**
+	 * Funcion para desencriptar bytes previamente encriptados asimetricamente con la llave correspondiente
+	 * @param data
+	 * @param llave
+	 * @return String desencriptado
+	 * @throws Exception
+	 */
 	public String decryptDataAsymmetric(byte[] data, Key llave) throws Exception{  
 		Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
 		cipher.init(Cipher.DECRYPT_MODE, llave); 

@@ -6,11 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
