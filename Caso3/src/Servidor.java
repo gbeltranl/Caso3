@@ -267,11 +267,14 @@ class MarcoServidor extends JFrame implements Runnable{
 				
 				Boolean flag = false;
 				
+				int linea = 0;
+				
 				 for (int y=0; y < 32; y++) {
 					    String nombreTabla = Servidor.matriz[0][y];	
 					    
 					    if (nombreTabla.equals(nombre)){
 					    	flag = true;
+					    	linea = y;
 					    }
 					    
 				 }
@@ -286,9 +289,17 @@ class MarcoServidor extends JFrame implements Runnable{
 					String paquete = flujoEntrada.readUTF();
 
 					areaTexto.append("\n"+ paquete);
-
+					flag = false;
 					
-					if(true) {
+					    String numeroPaquete = Servidor.matriz[1][linea];	
+					    
+					    if (numeroPaquete.equals(paquete)){
+					    	flag = true;
+					    	
+					    }
+					
+					
+					if(flag) {
 
 						flujoSalida.writeUTF("Estado del paquete");
 
