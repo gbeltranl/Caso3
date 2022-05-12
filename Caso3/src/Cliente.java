@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.Key;
 import java.security.PublicKey;
+import java.util.Hashtable;
 import java.util.Random;
 import java.util.Scanner; 
 
@@ -14,12 +15,16 @@ public class Cliente {
 	private static Encriptador ec;
 	private static File archivoLlave;
 	private static PublicKey llaveServidor;
-
-
+	//public static Hashtable contenedor=new Hashtable();
+	
+	
+	
+	
 
 	public static void main(String[] args) {
 		ec = new Encriptador();
 		archivoLlave = new File("./docs/llavePublicaServidor.txt");
+		
 		Cliente cliente1 = new Cliente();
 
 		cliente1.protocolo();
