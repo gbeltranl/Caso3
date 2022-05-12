@@ -29,7 +29,26 @@ public class Encriptador {
 	private final String ASYMMETRIC_ALGORITHM = "RSA";
 	private final String HMAC_ALGORITHM = "HmacSHA256";
 	private final String PADDING_ALGORITHM = "AES/ECB/PKCS5Padding";
+	
+	private String byteToStr(byte[] bytes) {
+		String stringBytes = "";
+		for (byte b : bytes) {
+			stringBytes += " " + b;
+		}
+		return stringBytes;
 
+	}
+	
+	private byte[] strToBytes(String stringBytes) {
+		byte[] bytes = new byte[128];
+		String[] byteStr = stringBytes.trim().split(" ");
+		for (int i = 0; i < byteStr.length; i++) {
+			Byte byteValue = (byte) Integer.parseInt(byteStr[i]);
+			bytes[i] = byteValue;
+		}
+		return bytes;
+	}
+	
 	public KeyPair generateAsymmetricKeyPair() {
 		KeyPairGenerator keyGen = null;
 		KeyPair keyPair = null;
@@ -59,30 +78,47 @@ public class Encriptador {
 		return keyGen.generateKey();
 	}
 
-	public byte[] encryptDataSymmetric(String data, Key llave) throws Exception {  
-		Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
-		cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
-		byte[] input = data.getBytes();
-		cipher.update(input);
-		byte[] cipherText = cipher.doFinal();
-		return cipherText;  
+	public String encryptMessageSymmetric(String data, Key llave) {  
+		try {
+			Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
+			cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
+			byte[] input = data.getBytes();
+			cipher.update(input);
+			byte[] cipherText = cipher.doFinal();
+			return byteToStr(cipherText);  
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	} 
 
-	public byte[] encryptDataAsymmetric(String data, Key llave) throws Exception {  
-		Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
-		cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
-		byte[] input = data.getBytes();
-		cipher.update(input);
-		byte[] cipherText = cipher.doFinal();
-		return cipherText;  
+	public String encryptMessageAsymmetric(String data, Key llave)  {
+		try {
+			Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
+			cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
+			byte[] input = data.getBytes();
+			cipher.update(input);
+			byte[] cipherText = cipher.doFinal();
+			return byteToStr(cipherText);  
+		} catch (Exception e) {
+			e.printStackTrace();		
+		}
+		return null;
+
 	} 
 
-	public String decryptDataSymmetric(byte[] data, Key llave) throws Exception{  
-		Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
-		cipher.init(Cipher.DECRYPT_MODE, llave); 
-		cipher.update(data);
-		byte[] decipherText = cipher.doFinal();
-		return new String(decipherText, "UTF8"); 
+	public String decryptMessageSymmetric(String data, Key llave) throws Exception{ 
+		try {
+			Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
+			cipher.init(Cipher.DECRYPT_MODE, llave); 
+			cipher.update(strToBytes(data));
+			byte[] decipherText = cipher.doFinal();
+			return new String(decipherText, "UTF8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -92,12 +128,18 @@ public class Encriptador {
 	 * @return String desencriptado
 	 * @throws Exception
 	 */
-	public String decryptDataAsymmetric(byte[] data, Key llave) throws Exception{  
-		Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
-		cipher.init(Cipher.DECRYPT_MODE, llave); 
-		cipher.update(data);
-		byte[] decipherText = cipher.doFinal();
-		return new String(decipherText, "UTF8"); 
+	public String decryptMessageAsymmetric(String data, Key llave) {  
+		try {
+			Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
+			cipher.init(Cipher.DECRYPT_MODE, llave); 
+			cipher.update(strToBytes(data));
+			byte[] decipherText = cipher.doFinal();
+			return new String(decipherText, "UTF8"); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 	public byte[] calcHmacSha256(Key secretKey, byte[] message) {
@@ -133,8 +175,38 @@ public class Encriptador {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return key;
+	}
+
+	public String encryptKeyAsymmetric(Key data, Key llave) {
+		try {
+			Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
+			cipher.init (Cipher.ENCRYPT_MODE, llave); // Inicializar 
+			byte[] encodedKey = Base64.getEncoder().encode(data.getEncoded());
+			cipher.update(encodedKey);
+			byte[] cipherText = cipher.doFinal();
+			return byteToStr(cipherText);  
+		} catch (Exception e) {
+			e.printStackTrace();		
+		}
+		return null;
+	}
+	
+	public Key decryptKeyAsymmetric(String data, Key llave) {
+		try {
+			Cipher cipher = Cipher.getInstance (ASYMMETRIC_ALGORITHM); // Crear un cifrado  
+			cipher.init (Cipher.DECRYPT_MODE, llave); // Inicializar 
+			cipher.update(strToBytes(data));
+			byte[] cipherText = cipher.doFinal();
+			byte[] decodedKey = Base64.getDecoder().decode(cipherText);
+
+			Key key = new SecretKeySpec(decodedKey, 0, decodedKey.length, SYMMETRIC_ALGORITHM); 
+			return key;  
+		} catch (Exception e) {
+			e.printStackTrace();		
+		}
+		return null;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -31,7 +32,7 @@ public class Servidor {
 	private String nombreCliente;
 	private long identificadorPaquete;
 	private String estadoPaquete;
-	
+
 	public static void main(String[] args) {
 		ec = new Encriptador();
 		kp = ec.generateAsymmetricKeyPair();
@@ -50,29 +51,37 @@ public class Servidor {
 
 
 
-		MarcoServidor miMarco = new MarcoServidor();
-		
+		MarcoServidor miMarco = new MarcoServidor(publicKey, privateKey);
+
 		miMarco.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		
+
+
+
 	}
 }
 class MarcoServidor extends JFrame implements Runnable{
-	public MarcoServidor() {
+	private PublicKey publicKey;
+	private PrivateKey privateKey;
+	private Encriptador ec;
+	public MarcoServidor(PublicKey publicKey2, PrivateKey privateKey2) {
+		ec = new Encriptador();
+		
+		publicKey = publicKey2;
+		
+		privateKey = privateKey2;
 		
 		setBounds(1200,300,280,350);
-		
+
 		JPanel miLamina = new JPanel();
-		
+
 		miLamina.setLayout(new BorderLayout());
-		
+
 		areaTexto = new JTextArea();
-		
+
 		miBoton = new JButton("Enviar");
-		
+
 		add(miBoton);
-		
+
 		miLamina.add(areaTexto,BorderLayout.CENTER);
 
 		add(miLamina);
@@ -81,15 +90,15 @@ class MarcoServidor extends JFrame implements Runnable{
 
 		Thread miHilo = new Thread(this);
 
-		
+
 		miHilo.start();
-		
-		
-		
+
+
+
 	}
 
 	private JTextArea areaTexto;
-	
+
 	private JButton miBoton;
 
 	@Override
@@ -100,92 +109,92 @@ class MarcoServidor extends JFrame implements Runnable{
 
 		try {
 			ServerSocket servidor = new ServerSocket(5001);
-			
+
 			while(true) {
-			
-			Socket miSocket = servidor.accept();
-			
-			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
-		
-			
-			DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
-	
-			String mensajeTexto = flujoEntrada.readUTF();
-			
-			areaTexto.append("\n"+ mensajeTexto);
-			
-			
-			
-			// Envío de mensaje ACK
-			flujoSalida.writeUTF("ACK");
-			//
-		
-			// Llegada de mensaje de 24 digitos
-			String Paso2 = flujoEntrada.readUTF();
-			
-			areaTexto.append("\n"+ Paso2);
-			
-			// TODO Cifrar reto con llave privada y enviar al cliente
-			
-			flujoSalida.writeUTF("Reto Cifrado");
-			
-			
-			
-			// TODO El servidor extrae la llave simétrica y responde con un mensaje de confirmación (¨ACK¨).
-			String llaveSimetrica = flujoEntrada.readUTF();
-			
-			areaTexto.append("\n"+ llaveSimetrica);
-			
-			flujoSalida.writeUTF("ACK");
-			
-			// TODO  Si el nombre no está en la tabla el servidor responde con un mensaje de error (¨ERROR¨). 
-			
-			String nombre = flujoEntrada.readUTF();
-			
-			areaTexto.append("\n"+ nombre);
-			
-			if (true) {
-				
+
+				Socket miSocket = servidor.accept();
+
+				DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
+
+
+				DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
+
+				String mensajeTexto = flujoEntrada.readUTF();
+
+				areaTexto.append("\n"+ mensajeTexto);
+
+
+
+				// Envï¿½o de mensaje ACK
 				flujoSalida.writeUTF("ACK");
+				//
+
+				// Llegada de mensaje de 24 digitos
+				String reto = flujoEntrada.readUTF();
+
+				areaTexto.append("\n"+ reto);
+
+				//Cifrar reto con llave privada y enviar al cliente
+				String retoCifrado = ec.encryptMessageAsymmetric(reto, privateKey);
+				flujoSalida.writeUTF(retoCifrado);
+
+
+
+				//El servidor extrae la llave simï¿½trica y responde con un mensaje de confirmaciï¿½n (ï¿½ACKï¿½).
+				String llaveSimetrica = flujoEntrada.readUTF();
+				Key simmetricKey = ec.decryptKeyAsymmetric(llaveSimetrica, privateKey);
+				areaTexto.append("\n"+ llaveSimetrica);
+
+				flujoSalida.writeUTF("ACK");
+
+				// TODO  Si el nombre no estï¿½ en la tabla el servidor responde con un mensaje de error (ï¿½ERRORï¿½). 
+
+				String nombre = flujoEntrada.readUTF();
 				
-				// TODO Al recibir la solicitud anterior, el servidor verifica que el nombre de usuario recibido antes y el identificador del
-				//paquete estén en la tabla y correspondan.
-				
-				String paquete = flujoEntrada.readUTF();
-				
-				areaTexto.append("\n"+ paquete);
-				
-				if(true) {
-					
-					flujoSalida.writeUTF("Estado del paquete");
-					
-					String confirmacionServidor = flujoEntrada.readUTF();
-					
-					areaTexto.append("\n"+ confirmacionServidor);
-					
-					//TODO Enviar codigo de resumen
-					
-					flujoSalida.writeUTF("Codigo resumen");
-					
-				}else {
-					
-					areaTexto.append("\n"+ "No encontrado el paquete");
+				areaTexto.append("\n"+ nombre);
+
+				if (true) {
+
+					flujoSalida.writeUTF("ACK");
+
+					// TODO Al recibir la solicitud anterior, el servidor verifica que el nombre de usuario recibido antes y el identificador del
+					//paquete estï¿½n en la tabla y correspondan.
+
+					String paquete = flujoEntrada.readUTF();
+
+					areaTexto.append("\n"+ paquete);
+
+					if(true) {
+
+						flujoSalida.writeUTF("Estado del paquete");
+
+						String confirmacionServidor = flujoEntrada.readUTF();
+
+						areaTexto.append("\n"+ confirmacionServidor);
+
+						//TODO Enviar codigo de resumen
+
+						flujoSalida.writeUTF("Codigo resumen");
+
+					}else {
+
+						areaTexto.append("\n"+ "No encontrado el paquete");
+					}
+
+
+
+
+
+				} else {
+
+					flujoSalida.writeUTF("Error");
 				}
-				
-				
-				
-				
-				
-			} else {
-				
-				flujoSalida.writeUTF("Error");
-			}
-			
-			
-			flujoSalida.close();
-			
-			//miSocket.close();
-			
+
+
+				flujoSalida.close();
+
+				//miSocket.close();
+
 			}
 
 		} catch (IOException e) {
@@ -194,5 +203,5 @@ class MarcoServidor extends JFrame implements Runnable{
 		}
 
 	}
-	
+
 }

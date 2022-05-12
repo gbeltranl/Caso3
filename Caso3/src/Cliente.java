@@ -1,152 +1,171 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-
+import java.security.Key;
+import java.security.PublicKey;
+import java.util.Random;
 import java.util.Scanner; 
 
 
 public class Cliente {
-	
-		public static void main(String[] args) {
-			
-			Cliente cliente1 = new Cliente();
-			
-			cliente1.protocolo();
 
-}
+	private static Encriptador ec;
+	private static File archivoLlave;
+	private static PublicKey llaveServidor;
 
-		
-public void protocolo() {
-	
-			System.out.println("Iniciando Cliente...");
-			
-			System.out.println("Leyendo llave pública");
-			
-			//TODO LEER LLAVE PUBLICA DEL SERVIDOR
-			
-			
 
-			try {
-				
-				//Conexion Socket
-				Socket misocket = new Socket("localhost",5001);
-				
-				DataOutputStream flujoSalida = new DataOutputStream(misocket.getOutputStream());
-				
-				DataInputStream flujoEntrada = new DataInputStream(misocket.getInputStream());
-				
-				//Inicio Sesion
-				Scanner scan = new Scanner(System.in);  
-				
-			    System.out.println("Desea Iniciar sesión? : a) Sí  b) No");
 
-			    String mensaje = scan.nextLine(); 
-			    
-			    if(mensaje.equals("a") ) {
-			    	
-			    	flujoSalida.writeUTF("Iniciar sesion");
-			    	
-			    	System.out.println("Iniciando Sesión...");
-			    	
-			
-			    	
-			    	// Llegada de Mensaje ACK
-			    	String mensajeLlegada = flujoEntrada.readUTF();
-			    	
-			    	System.out.println(mensajeLlegada);
-			    	
-			    	
-			    	//TODO El cliente envía al servidor un reto (un número aleatorio de 24 dígitos)
+	public static void main(String[] args) {
+		ec = new Encriptador();
+		archivoLlave = new File("./docs/llavePublicaServidor.txt");
+		Cliente cliente1 = new Cliente();
 
-			    	flujoSalida.writeUTF("Mensaje de 24");
-			    	
-			    	// LLega el reto cifrado
-			    	String retoCifrado = flujoEntrada.readUTF();
-			    	
-			    	System.out.println(retoCifrado);
-			
-			
-			    	// TODO Al recibir la respuesta, el cliente valida que el reto cifrado tenga el valor esperado; si la validación pasa entonces
-			    	//      el cliente continúa con el protocolo; si la validación no pasa entonces el cliente termina la comunicación. 
-			    	
-			    	if (true) {
-			    		
-			    		//TODO El cliente genera una llave simétrica (LS),
-			    		//     la cifra con la llave pública del servidor (KS+) y la envía al servidor. 
-			    		flujoSalida.writeUTF("Llave Simétrica");
-			    		
-			    		// LLega la confirmación ACK
-			    		String confirmacion = flujoEntrada.readUTF();
-			    		
-			    		System.out.println(confirmacion);
-			    		
-			    		
-			    		// TODO El cliente envía su nombre y espera un mensaje de confirmación (¨ACK¨)
-			    		
-						
-					    System.out.println("Escriba su nombre: ");
+		cliente1.protocolo();
 
-					    String nombre = scan.nextLine();
-			    		
-			    		flujoSalida.writeUTF(nombre);
-			    		
-			    		String confirmacion2 = flujoEntrada.readUTF();
-			    		
-			    		System.out.println(confirmacion2);
-			    		
-			    		// El cliente envía el identificador del paquete para el que está buscando información.
-			    		
-			    		System.out.println("Escriba el identificador de su paquete: ");
+	}
+	private String generateInt(int digits) {
+	    StringBuilder str = new StringBuilder();
+	    Random random = new Random();
+	    for(int i = 0; i < digits; i++) {
+	        str.append(random.nextInt(10));
+	    }
+	    return str.toString();
+	}
 
-					    String paquete = scan.nextLine();
+	public void protocolo() {
 
-			    		flujoSalida.writeUTF(paquete);
-			    		
-			    		
-			    		// TODO Recibe el estado del paquete
-			    		String estadoPaquete = flujoEntrada.readUTF();
-			    		
-			    		System.out.println(estadoPaquete);
-			    		
-			    		flujoSalida.writeUTF("ACK");
-			    		
-			    		// TODO El cliente debe validar la integridad de la información recibida y si la validación es exitosa entones debe
-			    		//desplegar la información en consola. 
-			    		
-			    		if(true) {
-			    			
-			    			System.out.println("Validacion Exitosa");
-			    			
-			    		}else {
-			    			
-			    			System.out.println("Validacion Errada");
-			    		}
-			    		
-			    	} else {
-			    		
-			    		System.out.println("Termina protocolo");
-			    	}
-			    	
-			    }else if(mensaje.equals("b")) {
-			    	
-			    	System.out.println("Salió");
-			    }
-				
-			    
-				
-			
-				
-			} catch (java.net.UnknownHostException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Unk problem");
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.out.println("IOException problem");
-				e.printStackTrace();
+		System.out.println("Iniciando Cliente...");
+
+		System.out.println("Leyendo llave pï¿½blica");
+
+		llaveServidor = ec.fileToKey(archivoLlave);
+
+
+
+		try {
+
+			//Conexion Socket
+			Socket misocket = new Socket("localhost",5001);
+
+			DataOutputStream flujoSalida = new DataOutputStream(misocket.getOutputStream());
+
+			DataInputStream flujoEntrada = new DataInputStream(misocket.getInputStream());
+
+			//Inicio Sesion
+			Scanner scan = new Scanner(System.in);  
+
+			System.out.println("Desea Iniciar sesiï¿½n? : a) Sï¿½  b) No");
+
+			String mensaje = scan.nextLine(); 
+
+			if(mensaje.equals("a") ) {
+
+				flujoSalida.writeUTF("Iniciar sesion");
+
+				System.out.println("Iniciando Sesiï¿½n...");
+
+
+
+				// Llegada de Mensaje ACK
+				String mensajeLlegada = flujoEntrada.readUTF();
+
+				System.out.println(mensajeLlegada);
+
+
+				// El cliente envï¿½a al servidor un reto (un nï¿½mero aleatorio de 24 dï¿½gitos)
+				String reto = generateInt(24);
+				flujoSalida.writeUTF(reto);
+
+				// LLega el reto cifrado
+				String retoCifrado = flujoEntrada.readUTF();
+				String decifrado = ec.decryptMessageAsymmetric(retoCifrado, llaveServidor);
+				boolean retoCorrecto = decifrado.equals(reto);
+
+				//  Al recibir la respuesta, el cliente valida que el reto cifrado tenga el valor esperado; si la validaciï¿½n pasa entonces
+				//      el cliente continï¿½a con el protocolo; si la validaciï¿½n no pasa entonces el cliente termina la comunicaciï¿½n. 
+
+				if (retoCorrecto) {
+					System.out.println("Reto Correcto");
+
+					//TODO El cliente genera una llave simï¿½trica (LS),
+					//     la cifra con la llave pï¿½blica del servidor (KS+) y la envï¿½a al servidor. 
+					Key llaveSimetrica = ec.generateSymmetricKey();
+					String llaveEncriptada = ec.encryptKeyAsymmetric(llaveSimetrica, llaveServidor);
+					flujoSalida.writeUTF(llaveEncriptada);
+
+					// LLega la confirmaciï¿½n ACK
+					String confirmacion = flujoEntrada.readUTF();
+
+					System.out.println(confirmacion);
+
+
+					// TODO El cliente envï¿½a su nombre y espera un mensaje de confirmaciï¿½n (ï¿½ACKï¿½)
+
+
+					System.out.println("Escriba su nombre: ");
+
+					String nombre = scan.nextLine();
+
+					flujoSalida.writeUTF(nombre);
+
+					String confirmacion2 = flujoEntrada.readUTF();
+
+					System.out.println(confirmacion2);
+
+					// El cliente envï¿½a el identificador del paquete para el que estï¿½ buscando informaciï¿½n.
+
+					System.out.println("Escriba el identificador de su paquete: ");
+
+					String paquete = scan.nextLine();
+
+					flujoSalida.writeUTF(paquete);
+
+
+					// TODO Recibe el estado del paquete
+					String estadoPaquete = flujoEntrada.readUTF();
+
+					System.out.println(estadoPaquete);
+
+					flujoSalida.writeUTF("ACK");
+
+					// TODO El cliente debe validar la integridad de la informaciï¿½n recibida y si la validaciï¿½n es exitosa entones debe
+					//desplegar la informaciï¿½n en consola. 
+
+					if(true) {
+
+						System.out.println("Validacion Exitosa");
+
+					}else {
+
+						System.out.println("Validacion Errada");
+					}
+
+				} else {
+
+					System.out.println("Termina protocolo");
+				}
+
+			}else if(mensaje.equals("b")) {
+
+				System.out.println("Saliï¿½");
 			}
-			
+
+
+
+
+
+		} catch (java.net.UnknownHostException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Unk problem");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("IOException problem");
+			e.printStackTrace();
 		}
+
+	}
 }
 
