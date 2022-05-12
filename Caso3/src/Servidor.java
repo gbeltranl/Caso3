@@ -244,7 +244,10 @@ class MarcoServidor extends JFrame implements Runnable{
 				areaTexto.append("\n"+ reto);
 
 				//Cifrar reto con llave privada y enviar al cliente
+				long inicioCifradoAsimetrico = System.currentTimeMillis();
 				String retoCifrado = ec.encryptMessageAsymmetric(reto, privateKey);
+				long finCifradoAsimetrico = System.currentTimeMillis();
+
 				flujoSalida.writeUTF(retoCifrado);
 
 
