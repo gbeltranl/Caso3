@@ -261,12 +261,22 @@ class MarcoServidor extends JFrame implements Runnable{
 
 				// TODO  Si el nombre no est� en la tabla el servidor responde con un mensaje de error (�ERROR�). 
 
-				String nombre = flujoEntrada.readUTF();
-				
+				String nombre = flujoEntrada.readUTF();			
 				
 				areaTexto.append("\n"+ nombre);
+				
+				Boolean flag = false;
+				
+				 for (int y=0; y < 32; y++) {
+					    String nombreTabla = Servidor.matriz[0][y];	
+					    
+					    if (nombreTabla.equals(nombre)){
+					    	flag = true;
+					    }
+					    
+				 }
 
-				if (true) {
+				if (flag) {
 
 					flujoSalida.writeUTF("ACK");
 
@@ -277,6 +287,7 @@ class MarcoServidor extends JFrame implements Runnable{
 
 					areaTexto.append("\n"+ paquete);
 
+					
 					if(true) {
 
 						flujoSalida.writeUTF("Estado del paquete");
