@@ -71,11 +71,9 @@ class MarcoServidor extends JFrame implements Runnable{
 		
 		areaTexto = new JTextArea();
 		
-//p		
 		miBoton = new JButton("Enviar");
 		
 		add(miBoton);
-//
 		
 		miLamina.add(areaTexto,BorderLayout.CENTER);
 
@@ -198,44 +196,5 @@ class MarcoServidor extends JFrame implements Runnable{
 		}
 
 	}
-	/*
-	public void protocoloS() {
-		
-		System.out.println("Iniciando Servidor:");
-		
-		try {
-			ServerSocket servidor = new ServerSocket(5000);
-			
-			while(true) {
-			
-			Socket miSocket = servidor.accept();
-			
-			DataInputStream flujoEntrada = new DataInputStream(miSocket.getInputStream());
-		
-			
-			//DataOutputStream flujoSalida = new DataOutputStream(miSocket.getOutputStream());
-
-			
-			String mensajeTexto = flujoEntrada.readUTF();
-			
-			areaTexto.append("\n"+ mensajeTexto);
-			
-			
-			
-			//
-			//flujoSalida.writeUTF("Recibido");
-			//
-		
-			//flujoSalida.close();
-			
-			//miSocket.close();
-			
-			}
-
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}*/
+	
 }
