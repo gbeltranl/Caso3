@@ -58,7 +58,7 @@ public void protocolo() {
 			    	
 			    	
 			    	//TODO El cliente envía al servidor un reto (un número aleatorio de 24 dígitos)
-			    	
+
 			    	flujoSalida.writeUTF("Mensaje de 24");
 			    	
 			    	// LLega el reto cifrado
@@ -135,21 +135,7 @@ public void protocolo() {
 				
 			    
 				
-			//	flujoSalida.writeUTF("Iniciar sesion");
-				
-				//flujoSalida.close();
-				
-				
-				/*
-				DataInputStream flujoEntrada = new DataInputStream(misocket.getInputStream());
-				
-				String mensajeTexto = flujoEntrada.readUTF();
-				
-				
-				*/
-				
-				
-				//misocket.close();
+			
 				
 			} catch (java.net.UnknownHostException e) {
 				// TODO Auto-generated catch block
@@ -161,41 +147,6 @@ public void protocolo() {
 				e.printStackTrace();
 			}
 			
-			/**
-			//Leer la llave pública del servidor
-			System.out.println("Leer llave pública...");
-			
-			//Iniciando Sesión
-			System.out.println("Iniciando sesión");
-			
-			//Enviando reto
-			System.out.println("Enviando reto...");
-			
-			//Recibir reto cifrado
-			System.out.println("Recibir reto cifrado...");
-			
-			//Validar cifrado
-			System.out.println("Validando cifrado...");
-			
-			//Generar llave simetrica
-			System.out.println("LLave simetrica con llave publica...");
-			
-			//El cliente envía nombre y espera mensaje de confirmación
-			
-			
-			//Envio identificador del paquete
-
-
-			//Recibir Estado del paquete
-
-
-			//Enviar mensaje de confirmacion
-			
-			//Recibe código de resumen
-			
-			//Validar intedridad de información 
-		
-			*/
 		}
 }
 
