@@ -108,7 +108,7 @@ public class Encriptador {
 
 	} 
 
-	public String decryptMessageSymmetric(String data, Key llave) throws Exception{ 
+	public String decryptMessageSymmetric(String data, Key llave) { 
 		try {
 			Cipher cipher = Cipher.getInstance (PADDING_ALGORITHM); // Crear un cifrado  
 			cipher.init(Cipher.DECRYPT_MODE, llave); 
@@ -142,16 +142,16 @@ public class Encriptador {
 
 	}
 
-	public byte[] calcHmacSha256(Key secretKey, byte[] message) {
+	public String calcHmacSha256(Key secretKey, String message) {
 		byte[] hmacSha256 = null;
 		try {
 			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
 			mac.init(secretKey);
-			hmacSha256 = mac.doFinal(message);
+			hmacSha256 = mac.doFinal(message.getBytes());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return hmacSha256;
+		return byteToStr(hmacSha256);
 	}
 
 	public String keyToString(Key key) {

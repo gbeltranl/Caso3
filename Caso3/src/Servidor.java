@@ -254,10 +254,10 @@ class MarcoServidor extends JFrame implements Runnable{
 
 				flujoSalida.writeUTF("ACK");
 
-				// TODO  Si el nombre no est� en la tabla el servidor responde con un mensaje de error (�ERROR�). 
+				//   Si el nombre no est� en la tabla el servidor responde con un mensaje de error (�ERROR�). 
 
 				String nombre = flujoEntrada.readUTF();			
-				
+				nombre = ec.decryptMessageAsymmetric(nombre, privateKey);
 				areaTexto.append("\n"+ nombre);
 				
 				Boolean flag = false;
@@ -278,11 +278,11 @@ class MarcoServidor extends JFrame implements Runnable{
 
 					flujoSalida.writeUTF("ACK");
 
-					// TODO Al recibir la solicitud anterior, el servidor verifica que el nombre de usuario recibido antes y el identificador del
+					// Al recibir la solicitud anterior, el servidor verifica que el nombre de usuario recibido antes y el identificador del
 					//paquete est�n en la tabla y correspondan.
 
 					String paquete = flujoEntrada.readUTF();
-
+					paquete = ec.decryptMessageAsymmetric(paquete, privateKey);
 					areaTexto.append("\n"+ paquete);
 					flag = false;
 					
@@ -298,7 +298,7 @@ class MarcoServidor extends JFrame implements Runnable{
 						
 						String estadoPaquete = Servidor.matriz[2][linea];
 
-						flujoSalida.writeUTF(estadoPaquete);
+						flujoSalida.writeUTF(ec.encryptMessageAsymmetric(estadoPaquete, privateKey));
 
 						String confirmacionServidor = flujoEntrada.readUTF();
 
@@ -306,7 +306,7 @@ class MarcoServidor extends JFrame implements Runnable{
 
 						//TODO Enviar codigo de resumen
 
-						flujoSalida.writeUTF("Codigo resumen");
+						flujoSalida.writeUTF(ec.calcHmacSha256(simmetricKey, estadoPaquete));
 
 					}else {
 
