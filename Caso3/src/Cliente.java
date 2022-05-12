@@ -16,18 +16,17 @@ public class Cliente extends Thread{
 	private static File archivoLlave;
 	private static PublicKey llaveServidor;
 	private String nombreCliente;
-	private int numPaqueteCliente;
+	private String numPaqueteCliente;
+	private static String matriz[][] = new String[3][32];
 
-
-	public Cliente(String nombre, int idPaquete) {
+	public Cliente(String nombre, String idPaquete) {
 		nombreCliente = nombre;
 		numPaqueteCliente = idPaquete;
 	}
 
-	private void cambiarPaquete(int idPaquete) {
-		numPaqueteCliente= idPaquete;
-	}
+	
 	public static void main(String[] args) {
+		matriz = Servidor.matriz;
 		ec = new Encriptador();
 		archivoLlave = new File("./docs/llavePublicaServidor.txt");
 		System.out.println("Tipo de cliente: \n1)Iterativo \n2)Concurrente");
@@ -35,9 +34,10 @@ public class Cliente extends Thread{
 		int opcion = scan.nextInt(); 
 		switch (opcion) {
 		case 1: 
-			Cliente cliente = new Cliente("Nombre", 1);
+			
+			Cliente cliente = new Cliente(matriz[0][1], matriz[1][1]);
 			for (int i = 0; i < 32; i++) {
-				//TODO acceder a la tabla
+				
 				cliente.protocolo(cliente.nombreCliente, cliente.numPaqueteCliente);
 			}
 			break;
@@ -47,7 +47,7 @@ public class Cliente extends Thread{
 			Cliente[] clientes = new Cliente[numClientes];
 			for (int i = 0; i < clientes.length; i++) {
 				//TODO acceso a la tabla
-				clientes[i] = new Cliente("nombre", 1);
+				clientes[i] = new Cliente(matriz[0][i], matriz[1][i]);
 				clientes[i].run();
 			}
 		default:
@@ -68,7 +68,7 @@ public class Cliente extends Thread{
 		return str.toString();
 	}
 
-	public void protocolo(String nombre, int idPaquete) {
+	public void protocolo(String nombre, String numPaqueteCliente2) {
 
 		System.out.println("Iniciando Cliente...");
 
@@ -146,7 +146,7 @@ public class Cliente extends Thread{
 
 					// El cliente env�a el identificador del paquete para el que est� buscando informaci�n.
 
-					flujoSalida.writeUTF(Integer.toString(idPaquete));
+					flujoSalida.writeUTF(numPaqueteCliente2);
 
 
 					// TODO Recibe el estado del paquete

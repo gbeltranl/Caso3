@@ -32,7 +32,7 @@ public class Servidor {
 	private String nombreCliente;
 	private long identificadorPaquete;
 	private String estadoPaquete;
-	static String matriz[][] = new String[3][32];
+	public static String matriz[][] = new String[3][32];
 	
 	public static void main(String[] args) {
 		ec = new Encriptador();
@@ -210,11 +210,6 @@ class MarcoServidor extends JFrame implements Runnable{
 		Servidor.matriz[2][30] = "Entregado";
 		Servidor.matriz[2][31] = "Enviado";
 		
-		for (int x=0; x < Servidor.matriz.length; x++) {
-			  for (int y=0; y < Servidor.matriz[x].length; y++) {
-			    System.out.println (Servidor.matriz[x][y]);
-			  }
-			}
 
 		try {
 			ServerSocket servidor = new ServerSocket(5001);
