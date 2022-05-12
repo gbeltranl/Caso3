@@ -9,56 +9,144 @@ import java.util.Scanner;
 public class Cliente {
 	
 		public static void main(String[] args) {
-	
-		while(true) {
-		Scanner scan = new Scanner(System.in);  
-	    System.out.println("Ingrese Mensaje");
+			
+			Cliente cliente1 = new Cliente();
+			
+			cliente1.protocolo();
 
-	    String mensaje = scan.nextLine();  
-		//scan.close();
-	    //////////////////////////////////////////////////////
-	    
-	    
-		try {
-			Socket misocket = new Socket("localhost",5000);
+}
+
+		
+public void protocolo() {
+	
+			System.out.println("Iniciando Cliente...");
 			
-			DataOutputStream flujoSalida = new DataOutputStream(misocket.getOutputStream());
+			System.out.println("Leyendo llave pública");
 			
-			
-			flujoSalida.writeUTF(mensaje);
-			
-			//flujoSalida.close();
+			//TODO LEER LLAVE PUBLICA DEL SERVIDOR
 			
 			
-			
-			DataInputStream flujoEntrada = new DataInputStream(misocket.getInputStream());
-			
-			String mensajeTexto = flujoEntrada.readUTF();
-			
-			if(mensajeTexto == "c") {
+
+			try {
 				
-				System.out.println(mensajeTexto);
+				//Conexion Socket
+				Socket misocket = new Socket("localhost",5001);
 				
-			}else {
+				DataOutputStream flujoSalida = new DataOutputStream(misocket.getOutputStream());
 				
-				System.out.println("Error en la consulta: " + mensajeTexto);
+				DataInputStream flujoEntrada = new DataInputStream(misocket.getInputStream());
 				
+				//Inicio Sesion
+				Scanner scan = new Scanner(System.in);  
+				
+			    System.out.println("Desea Iniciar sesión? : a) Sí  b) No");
+
+			    String mensaje = scan.nextLine(); 
+			    
+			    if(mensaje.equals("a") ) {
+			    	
+			    	flujoSalida.writeUTF("Iniciar sesion");
+			    	
+			    	System.out.println("Iniciando Sesión...");
+			    	
+			
+			    	
+			    	// Llegada de Mensaje ACK
+			    	String mensajeLlegada = flujoEntrada.readUTF();
+			    	
+			    	System.out.println(mensajeLlegada);
+			    	
+			    	
+			    	//TODO El cliente envía al servidor un reto (un número aleatorio de 24 dígitos)
+
+			    	flujoSalida.writeUTF("Mensaje de 24");
+			    	
+			    	// LLega el reto cifrado
+			    	String retoCifrado = flujoEntrada.readUTF();
+			    	
+			    	System.out.println(retoCifrado);
+			
+			
+			    	// TODO Al recibir la respuesta, el cliente valida que el reto cifrado tenga el valor esperado; si la validación pasa entonces
+			    	//      el cliente continúa con el protocolo; si la validación no pasa entonces el cliente termina la comunicación. 
+			    	
+			    	if (true) {
+			    		
+			    		//TODO El cliente genera una llave simétrica (LS),
+			    		//     la cifra con la llave pública del servidor (KS+) y la envía al servidor. 
+			    		flujoSalida.writeUTF("Llave Simétrica");
+			    		
+			    		// LLega la confirmación ACK
+			    		String confirmacion = flujoEntrada.readUTF();
+			    		
+			    		System.out.println(confirmacion);
+			    		
+			    		
+			    		// TODO El cliente envía su nombre y espera un mensaje de confirmación (¨ACK¨)
+			    		
+						
+					    System.out.println("Escriba su nombre: ");
+
+					    String nombre = scan.nextLine();
+			    		
+			    		flujoSalida.writeUTF(nombre);
+			    		
+			    		String confirmacion2 = flujoEntrada.readUTF();
+			    		
+			    		System.out.println(confirmacion2);
+			    		
+			    		// El cliente envía el identificador del paquete para el que está buscando información.
+			    		
+			    		System.out.println("Escriba el identificador de su paquete: ");
+
+					    String paquete = scan.nextLine();
+
+			    		flujoSalida.writeUTF(paquete);
+			    		
+			    		
+			    		// TODO Recibe el estado del paquete
+			    		String estadoPaquete = flujoEntrada.readUTF();
+			    		
+			    		System.out.println(estadoPaquete);
+			    		
+			    		flujoSalida.writeUTF("ACK");
+			    		
+			    		// TODO El cliente debe validar la integridad de la información recibida y si la validación es exitosa entones debe
+			    		//desplegar la información en consola. 
+			    		
+			    		if(true) {
+			    			
+			    			System.out.println("Validacion Exitosa");
+			    			
+			    		}else {
+			    			
+			    			System.out.println("Validacion Errada");
+			    		}
+			    		
+			    	} else {
+			    		
+			    		System.out.println("Termina protocolo");
+			    	}
+			    	
+			    }else if(mensaje.equals("b")) {
+			    	
+			    	System.out.println("Salió");
+			    }
+				
+			    
+				
+			
+				
+			} catch (java.net.UnknownHostException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Unk problem");
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("IOException problem");
+				e.printStackTrace();
 			}
 			
-			
-			
-			//misocket.close();
-			
-		} catch (java.net.UnknownHostException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Unk problem");
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("IOException problem");
-			e.printStackTrace();
-		}
-	
-	}
 		}
 }
+
