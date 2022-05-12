@@ -295,8 +295,10 @@ class MarcoServidor extends JFrame implements Runnable{
 					
 					
 					if(flag) {
+						
+						String estadoPaquete = Servidor.matriz[2][linea];
 
-						flujoSalida.writeUTF("Estado del paquete");
+						flujoSalida.writeUTF(estadoPaquete);
 
 						String confirmacionServidor = flujoEntrada.readUTF();
 
